@@ -1,0 +1,7 @@
+gemini-profiles/
+*.zip
+*.rar
+*.7z
+.idea/
+.vscode/
+node_modules/
