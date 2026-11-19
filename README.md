@@ -1,50 +1,49 @@
-# Скрипты-обертки для Gemini CLI и Antigravity CLI (Windows)
+# CLI wrappers for Gemini CLI, Antigravity and Codex (Windows)
 
-Этот репозиторий содержит набор `.bat` скриптов для удобного запуска и изоляции профилей при работе с Gemini CLI (от Google) и Antigravity CLI.
+Small `.bat` launchers I use to run AI coding CLIs on Windows. The main point is running Gemini CLI under two Google accounts: each account gets its own profile folder (`gemini-profiles\primary` and `gemini-profiles\secondary` next to the scripts), so the sign-ins don't overwrite each other.
 
-Они позволяют разделить сессии авторизации (например, на **Основной** и **Дополнительный** аккаунты Google) с помощью изолированных папок профилей, избегая конфликтов авторизации.
+## Files
 
-## Описание файлов
+**Gemini CLI, two accounts**
 
-### 1. Первичная авторизация и проверка (Основной аккаунт)
-* **`geminicode-primary-login.bat`**: Сбрасывает текущую сессию для основного профиля и открывает браузер для авторизации. При авторизации выберите ваш основной аккаунт Google.
-* **`geminicode-primary-check.bat`**: Запускает быстрый тестовый запрос для проверки авторизации под основным аккаунтом.
-* **`geminicode-primary-fullaccess.bat`**: Запускает Gemini CLI для основного профиля с автоматическим подтверждением инструментов (`--skip-trust --approval-mode yolo`).
+| File | What it does |
+|---|---|
+| `geminicode-primary-login.bat` | resets the primary profile and opens the browser to sign in |
+| `geminicode-primary-check.bat` | sends a quick test prompt; prints `PRIMARY_PROFILE_OK` if the sign-in works |
+| `geminicode-primary-fullaccess.bat` | starts Gemini CLI on the primary profile with `--skip-trust --approval-mode yolo` |
+| `geminicode-secondary-*.bat` | the same three for a second account (pick "Use another account" in the browser) |
 
-### 2. Вторичная авторизация и проверка (Второй аккаунт)
-* **`geminicode-secondary-login.bat`**: Сбрасывает сессию для вторичного профиля и открывает браузер. Выберите "Войти в другой аккаунт" (или Use another account) и войдите во второй аккаунт Google.
-* **`geminicode-secondary-check.bat`**: Запускает тестовый запрос для проверки авторизации под вторым аккаунтом.
-* **`geminicode-secondary-fullaccess.bat`**: Запускает Gemini CLI для вторичного профиля с автоматическим подтверждением.
+**Antigravity CLI** (the `geminicode*.bat` files without `primary`/`secondary` in the name start Antigravity, not Gemini CLI)
 
-### 3. Antigravity CLI обертки
-* **`geminicode.bat`** (или **`antigravity.bat`**): Запускает Antigravity CLI в обычном режиме с моделью по умолчанию (`gemini-3.5-flash-low`).
-* **`geminicode-fullaccess.bat`** (или **`antigravity-fullaccess.bat`**): Запускает Antigravity CLI с автоматическим подтверждением всех действий (`--dangerously-skip-permissions`).
-* **`geminicode-heavy.bat`**: Запускает Antigravity CLI с более мощной моделью (`gemini-3.1-pro`). Используйте экономно!
-* **`geminicode-heavy-fullaccess.bat`**: Запускает Antigravity CLI с мощной моделью и автоподтверждением.
+| File | What it does |
+|---|---|
+| `geminicode.bat` / `antigravity.bat` | normal mode, default model `gemini-3.5-flash-low` |
+| `geminicode-fullaccess.bat` / `antigravity-fullaccess.bat` | approves everything automatically (`--dangerously-skip-permissions`) |
+| `geminicode-heavy.bat` | stronger model `gemini-3.1-pro`, uses more quota |
+| `geminicode-heavy-fullaccess.bat` | stronger model with automatic approval |
 
-### 4. Codex CLI обертки (OpenAI)
-* **`codex.bat`**: Запуск Codex CLI в песочнице с запросом подтверждений.
-* **`codex-fullaccess.bat`**: Запуск Codex CLI в обход песочницы и автоподтверждением.
+**Codex CLI**
 
----
+| File | What it does |
+|---|---|
+| `codex.bat` | runs in the sandbox and asks before actions |
+| `codex-fullaccess.bat` | no sandbox, automatic approval |
 
-## Инструкция по установке и использованию для другого пользователя
+## Setup
 
-1. **Скачайте этот архив** и распакуйте его в удобную папку (например, `C:\tools\bat`).
-2. **Установите зависимости** (если они еще не установлены):
-   * **Node.js**: Убедитесь, что на компьютере установлен Node.js.
-   * **Gemini CLI**:
-     ```bash
-     npm install -g @google/gemini-cli@latest
-     ```
-   * **Antigravity CLI**: Откройте PowerShell и выполните команду:
+1. Put the files in a folder, for example `C:\tools\bat`. Add the folder to `PATH` if you want the commands to work from any terminal.
+2. Install what you need:
+   - Node.js
+   - Gemini CLI: `npm install -g @google/gemini-cli@latest`
+   - Antigravity CLI, in PowerShell:
      ```powershell
      powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://antigravity.google/cli/install.ps1 | iex"
      ```
-3. **Авторизуйтесь**:
-   * Для основного аккаунта запустите `geminicode-primary-login.bat` и пройдите авторизацию в браузере.
-   * Для проверки работы запустите `geminicode-primary-check.bat`. Вы должны увидеть сообщение `PRIMARY_PROFILE_OK`.
-   * (При необходимости) Для второго аккаунта запустите `geminicode-secondary-login.bat` и пройдите авторизацию (выбрав второй аккаунт в браузере). Для проверки запустите `geminicode-secondary-check.bat`.
+   - Codex CLI, if you use the Codex wrappers
+3. Sign in: run `geminicode-primary-login.bat`, then `geminicode-primary-check.bat`. For a second account do the same with the `secondary` files.
 
-4. **Запуск**:
-   * Вы можете использовать эти файлы напрямую или добавить путь к этой папке в системную переменную `PATH` среды Windows, чтобы вызывать их из любого терминала в любой рабочей директории.
+The `fullaccess` variants let the agent edit files and run commands without asking. Use them only in folders you trust it with.
+
+## По-русски
+
+Набор `.bat`-скриптов для запуска Gemini CLI под двумя Google-аккаунтами (у каждого своя папка профиля), а также Antigravity CLI и Codex CLI. Таблицы выше: что делает каждый файл. Установка: Node.js, Gemini CLI (`npm install -g @google/gemini-cli@latest`), затем `geminicode-primary-login.bat` и проверка `geminicode-primary-check.bat`.
